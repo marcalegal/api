@@ -19,7 +19,7 @@ type Brand struct {
 	State           int     `sql:"DEFAULT:0"gorm:"type:int"json:"state"`
 	AttorneyPower   string  `gorm:"type:text"json:"attorney_power"`
 	PaymentCode     string  `gorm:"type:text"json:"payment_code"`
-	ClassJSON       string  `gorm:"type:string"json:"clases"`
+	ClassJSON       string  `gorm:"type:text"json:"clases"`
 	User            User
 }
 
