@@ -12,7 +12,8 @@ import (
 // Builddb ...
 func Builddb() {
 	dbURL := os.Getenv("DATABASE_URL")
-	if os.Getenv("DATABASE_URL") == "" {
+	fmt.Println(dbURL)
+	if dbURL == "" {
 		host := "localhost"
 		user := "RodrigoFuenzalida"
 		dbname := "marcalegal"
