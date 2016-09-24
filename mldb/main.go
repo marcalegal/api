@@ -7,12 +7,13 @@ import (
 
 	"github.com/jinzhu/gorm"
 	// _ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/lib/pq"
 )
 
 // Builddb ...
 func Builddb() {
 	dbURL := os.Getenv("DATABASE_URL")
-	fmt.Println(dbURL)
+
 	if dbURL == "" {
 		host := "localhost"
 		user := "RodrigoFuenzalida"
@@ -20,6 +21,9 @@ func Builddb() {
 		sslmode := "disable"
 
 		dbURL = fmt.Sprintf("host=%s user=%s dbname=%s sslmode=%s", host, user, dbname, sslmode)
+	} else {
+		dbURL, _ = pq.ParseURL(dbURL)
+		dbURL += " sslmode=require"
 	}
 
 	db, err := gorm.Open("postgres", dbURL)
