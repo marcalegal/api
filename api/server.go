@@ -3,9 +3,11 @@ package api
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/codegangsta/negroni"
 	"github.com/jinzhu/gorm"
+	"github.com/lib/pq"
 	"github.com/marcalegal/api/apimux"
 	"github.com/marcalegal/api/brands"
 	"github.com/marcalegal/api/classes"
@@ -24,11 +26,19 @@ import (
 func App() *negroni.Negroni {
 	r := apimux.NewRouter()
 
-	host := "localhost"
-	user := "RodrigoFuenzalida"
-	dbname := "marcalegal"
-	sslmode := "disable"
-	dbURL := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=%s", host, user, dbname, sslmode)
+	dbURL := os.Getenv("DATABASE_URL")
+
+	if dbURL == "" {
+		host := "localhost"
+		user := "RodrigoFuenzalida"
+		dbname := "marcalegal"
+		sslmode := "disable"
+
+		dbURL = fmt.Sprintf("host=%s user=%s dbname=%s sslmode=%s", host, user, dbname, sslmode)
+	} else {
+		dbURL, _ = pq.ParseURL(dbURL)
+		dbURL += " sslmode=require"
+	}
 	db, err := gorm.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatalln(err)
