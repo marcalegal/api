@@ -2,7 +2,6 @@ package api
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/codegangsta/negroni"
@@ -41,7 +40,7 @@ func App() *negroni.Negroni {
 	}
 	db, err := gorm.Open("postgres", dbURL)
 	if err != nil {
-		log.Fatalln(err)
+		panic(err)
 	}
 
 	db.LogMode(true)

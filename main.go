@@ -20,9 +20,9 @@ func main() {
 	app := api.App()
 	port := os.Getenv("PORT")
 	if os.Getenv("PORT") == "" {
-		port = ":8000"
+		port = "8000"
 	}
+	port = fmt.Sprintf(":%s", port)
 	fmt.Println("running service on port ", port)
-
 	http.ListenAndServe(port, app)
 }
