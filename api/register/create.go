@@ -14,10 +14,7 @@ func create(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		var newUser mldb.UserResponse
-		// buf := new(bytes.Buffer)
-		// buf.ReadFrom(r.Body)
-		// s := buf.String()
-		// fmt.Println(s)
+
 		err := json.NewDecoder(r.Body).Decode(&newUser)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)

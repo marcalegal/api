@@ -2,6 +2,7 @@ package brands
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -28,14 +29,48 @@ func show(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
-		var brands []mldb.Brand
-		result := db.Where(
+		var brands mldb.BrandResponse
+		db.Where(
 			"id = ? and user_id = ?",
 			brandID,
 			id,
-		).Order("created_at desc").Find(&brands)
+		).Order("created_at desc").Find(&brands.Brand)
 
-		res, _ := json.Marshal(result.Value)
+		var nat mldb.Natural
+		var jur mldb.Juridica
+		var rpl mldb.RPL
+		var doms mldb.DomainsResponse
+
+		if brands.Brand.RegisterKind == "natural" {
+			db.
+				Table("naturals").
+				Where("brand_id = ?", brands.Brand.ID).
+				Find(&nat)
+			brands.Rut = nat.Rut
+			brands.Username = fmt.Sprintf("%s %s", nat.Name, nat.Lastname)
+			brands.Email = nat.Email
+		} else {
+			db.
+				Table("juridicas").
+				Select("id").
+				Where("brand_id = ?", brands.Brand.ID).
+				Find(&jur)
+
+			db.Table("rpls").Where("juridica_id = ?", jur.ID).Find(&rpl)
+			brands.Rut = rpl.Rut
+			brands.Username = rpl.Fullname
+			brands.Email = rpl.Email
+		}
+
+		if brands.Brand.DomRegister {
+			db.
+				Table("domains").
+				Where("brand_id = ?", brands.Brand.ID).
+				Find(&doms)
+			brands.Doms = doms
+		}
+
+		res, _ := json.Marshal(brands)
 		w.WriteHeader(http.StatusOK)
 		w.Write(res)
 	})

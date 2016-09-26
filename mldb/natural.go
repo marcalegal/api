@@ -14,8 +14,7 @@ type Natural struct {
 	Country  string `gorm:"type:varchar(255)"json:"pais"`
 	Email    string `gorm:"type:varchar(255)"json:"email"`
 	Phone    string `gorm:"type:varchar(255)"json:"telefono"`
-	Brand    Brand
-	BrandID  int `gorm:"type:int REFERENCES brands(id)"json:"brand_id"`
+	BrandID  uint   `gorm:"type:int REFERENCES brands(id)"json:"brand_id"`
 }
 
 // NaturalResponse ...

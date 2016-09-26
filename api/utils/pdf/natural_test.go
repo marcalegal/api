@@ -1,4 +1,4 @@
-package utils
+package pdf
 
 import "testing"
 
@@ -7,5 +7,5 @@ func TestNatural(t *testing.T) {
 }
 
 func TestLegal(t *testing.T) {
-	Legal("finciero", 1)
+	// Legal("finciero", 1)
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	"github.com/marcalegal/api/apimux"
+	"github.com/marcalegal/api/utils"
 	"github.com/marcalegal/api/utils/crawler"
 )
 
@@ -36,7 +37,7 @@ func Service(db *gorm.DB) apimux.Service {
 }
 
 func handler(db *gorm.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return utils.BearerAuth(db, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		params := mux.Vars(r)
 
@@ -90,7 +91,7 @@ func handler(db *gorm.DB) http.HandlerFunc {
 		w.WriteHeader(http.StatusOK)
 		w.Write(resp)
 		return
-	}
+	})
 }
 
 func reportError(w http.ResponseWriter, err error) {

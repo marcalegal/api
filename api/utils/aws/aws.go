@@ -69,6 +69,32 @@ func (s *S3Handler) UploadImage(file *os.File, filename string, userID int, bran
 	return s.GetImage(path)
 }
 
+// UploadPDF ...
+func (s *S3Handler) UploadPDF(file *os.File, filename string, userID int, brandName string) (string, error) {
+	defer file.Close()
+
+	fileInfo, _ := file.Stat()
+	var size = fileInfo.Size()
+
+	path := fmt.Sprintf("/%d/%s/%s", userID, brandName, fileInfo.Name())
+	ct := fileType(fileInfo.Name())
+
+	params := &s3.PutObjectInput{
+		Bucket:        aws.String(s.Bucket),
+		Key:           aws.String(path),
+		Body:          file,
+		ContentLength: aws.Int64(size),
+		ContentType:   aws.String(ct),
+	}
+
+	if _, err := s.Svc.PutObject(params); err != nil {
+		fmt.Printf("bad response: %s", err)
+		return "", err
+	}
+
+	return s.GetImage(path)
+}
+
 // NewAWSS3Handler ...
 func NewAWSS3Handler(bucket string) *S3Handler {
 	creds := credentials.NewStaticCredentials(AWSACCESSKEY, AWSSECRETKEY, TOKEN)

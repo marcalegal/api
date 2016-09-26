@@ -1,9 +1,13 @@
-package utils
+package pdf
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/jung-kurt/gofpdf"
+	"github.com/marcalegal/api/utils/aws"
+	"github.com/marcalegal/api/utils/emails"
+	"github.com/marcalegal/mldb"
 	"github.com/satori/go.uuid"
 )
 
@@ -29,7 +33,7 @@ func pdfGenerator() {
 }
 
 // Natural ...
-func Natural(brandName string, userID int) {
+func Natural(brandName string, user mldb.Natural, userID int, brand mldb.Brand) (string, error) {
 	pdf := gofpdf.New("P", "mm", "A4", "")
 	write := func(str string) {
 		tr := pdf.UnicodeTranslatorFromDescriptor("")
@@ -52,15 +56,15 @@ func Natural(brandName string, userID int) {
 	pdf.Cell(15, 0, "")
 
 	var text = ""
-	name := "Rodrigo"
-	lastname := "Fuenzalida"
-	rut := "16.642.817-3"
-	calle := "Avenida Fleming 9455"
-	comuna := "Las Condes"
-	ciudad := "Santiago"
-	pais := "Chile"
-	// // nombre, apellido, rut, calle, comuna, ciudad, pais
-	text = fmt.Sprintf("Don %s %s, C.N.I. N° %s, domiciliado en %s, %s y ciudad de %s de %s, otorga por el presente instrumento poder especial a los señores Roberto Fasani Puelma y José Rivera Rojas, ambos abogados habilitados para el ejercicio de la profesión, domiciliados en calle Nueva York Nº 9, Piso 14, Santiago, de esta Ciudad, poder tan amplio y suficiente como sea necesario conforme a Derecho, para que representen en Chile y/o en otros países, ante todos los tribunales, entidades y autoridades administrativas o judiciales que correspondan, en cualquier solicitud, gestión o litigio relacionado directa o indirectamente con derechos de propiedad intelectual e industrial, incluyendo patentes, modelos de utilidad, diseños industriales, dibujos industriales, esquemas de trazado, marcas comerciales, nombres comerciales, frases de propaganda, signos distintivos, indicaciones geográficas, denominaciones de origen, nombres de dominio de internet, variedades vegetales, derechos de autor y derechos conexos.", name, lastname, rut, calle, comuna, ciudad, pais)
+	name := user.Name
+	lastname := user.Lastname
+	rut := user.Rut
+	address := user.Address
+	comuna := user.Comuna
+	city := user.City
+	country := user.Country
+
+	text = fmt.Sprintf("Don %s %s, C.N.I. N° %s, domiciliado en %s, %s y ciudad de %s de %s, otorga por el presente instrumento poder especial a los señores Roberto Fasani Puelma y José Rivera Rojas, ambos abogados habilitados para el ejercicio de la profesión, domiciliados en calle Nueva York Nº 9, Piso 14, Santiago, de esta Ciudad, poder tan amplio y suficiente como sea necesario conforme a Derecho, para que representen en Chile y/o en otros países, ante todos los tribunales, entidades y autoridades administrativas o judiciales que correspondan, en cualquier solicitud, gestión o litigio relacionado directa o indirectamente con derechos de propiedad intelectual e industrial, incluyendo patentes, modelos de utilidad, diseños industriales, dibujos industriales, esquemas de trazado, marcas comerciales, nombres comerciales, frases de propaganda, signos distintivos, indicaciones geográficas, denominaciones de origen, nombres de dominio de internet, variedades vegetales, derechos de autor y derechos conexos.", name, lastname, rut, address, comuna, city, country)
 
 	write(text)
 	pdf.Cell(15, 0, "")
@@ -92,11 +96,32 @@ func Natural(brandName string, userID int) {
 	pdf.Line(10, 30, 200, 30)
 	pdf.Ln(20)
 
-	// $pdf->Output('pdfs/'.$brand_name.'_'.$nombre.'_'.$apellido.'.pdf', 'F');
 	filename := fmt.Sprintf("%s_%s_%s.pdf", brandName, name, lastname)
-	// path := fmt.Sprintf("/tmp/pdfs/%d/%s/%s", userID, brandName, filename)
-	if err := pdf.OutputFileAndClose(filename); err != nil {
+	path := fmt.Sprintf("/tmp/pdfs/%d/%s", userID, brandName)
+	if err := os.MkdirAll(path, os.ModePerm); err != nil {
+		panic(err)
+	}
+
+	file := fmt.Sprintf("%s/%s", path, filename)
+	if err := pdf.OutputFileAndClose(file); err != nil {
 		fmt.Println("Error while creating pdf")
 		fmt.Println(err.Error())
 	}
+	// here we upload the pdf into s3 and get back a url with the pdf file
+	s3Handler := aws.NewAWSS3Handler("marcalegal-attorny")
+
+	dst, err := os.Open(file)
+
+	url, err := s3Handler.UploadPDF(dst, filename, userID, brandName)
+	if err != nil {
+		return "", err
+	}
+	fmt.Println("Sending email")
+	if emails.SendEmailNatural(file, user, brand) {
+		if err := os.Remove(file); err != nil {
+			return "", err
+		}
+	}
+
+	return url, nil
 }

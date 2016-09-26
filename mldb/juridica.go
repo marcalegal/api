@@ -5,8 +5,6 @@ import "github.com/jinzhu/gorm"
 // Juridica ...
 type Juridica struct {
 	gorm.Model
-	NameRlp string `gorm:"type:varchar(255)"json:"name_rlp"`
-	RutRlp  string `gorm:"type:varchar(255)"json:"rut_rlp"`
 	Name    string `gorm:"type:varchar(255)"json:"name"`
 	Razon   string `gorm:"type:varchar(255)"json:"razon"`
 	Rut     string `gorm:"type:varchar(255)"json:"rut"`
@@ -17,8 +15,16 @@ type Juridica struct {
 	Country string `gorm:"type:varchar(255)"json:"country"`
 	Email   string `gorm:"type:varchar(255)"json:"email"`
 	Phone   string `gorm:"type:varchar(255)"json:"phone"`
-	Brand   Brand
-	BrandID int `gorm:"type:int REFERENCES brands(id)"json:"brand_id"`
+	BrandID uint   `gorm:"type:int REFERENCES brands(id)"json:"brand_id"`
+}
+
+// RPL ... Representante legal
+type RPL struct {
+	ID         uint   `gorm:"primary_key"json:"id"`
+	Fullname   string `gorm:"type:varchar(255)"json:"fullname"`
+	Rut        string `gorm:"type:varchar(255)"json:"rut"`
+	Email      string `gorm:"type:varchar(255)"json:"email"`
+	JuridicaID uint   `gorm:"type:int REFERENCES juridicas(id)"json:"juridicas_id"`
 }
 
 // JuridicaResponse ...

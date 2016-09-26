@@ -44,6 +44,11 @@ func Builddb() {
 		db.CreateTable(&Brand{})
 	}
 
+	db.DropTableIfExists(&Domains{})
+	if !db.HasTable(&Domains{}) {
+		db.CreateTable(&Domains{})
+	}
+
 	db.DropTableIfExists(&Natural{})
 	if !db.HasTable(&Natural{}) {
 		db.CreateTable(&Natural{})
@@ -52,6 +57,11 @@ func Builddb() {
 	db.DropTableIfExists(&Juridica{})
 	if !db.HasTable(&Juridica{}) {
 		db.CreateTable(&Juridica{})
+	}
+
+	db.DropTableIfExists(&RPL{})
+	if !db.HasTable(&RPL{}) {
+		db.CreateTable(&RPL{})
 	}
 
 	db.DropTableIfExists(&Values{})

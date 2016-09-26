@@ -1,4 +1,4 @@
-package utils
+package emails
 
 import "testing"
 
