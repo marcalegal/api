@@ -19,6 +19,7 @@ import (
 	"github.com/marcalegal/api/prices"
 	"github.com/marcalegal/api/recover"
 	"github.com/marcalegal/api/register"
+	"github.com/marcalegal/api/socket"
 	"github.com/marcalegal/api/uploader"
 	"github.com/rs/cors"
 )
@@ -59,17 +60,19 @@ func App() *negroni.Negroni {
 	v1.AddService("/uploader", uploader.Service(db))
 	v1.AddService("/recover", recover.Service(db))
 	v1.AddService("/admin", admin.Service(db))
+	v1.AddService("/admin-ws", socket.Service(db))
 
-	// c := cors.Default()
 	c := cors.New(cors.Options{
-		AllowedMethods: []string{"POST", "GET", "DELETE", "PATCH", "PUT"},
-		AllowedHeaders: []string{"Authorization", "Content-Type"},
+		AllowedMethods:   []string{"POST", "GET", "DELETE", "PATCH", "PUT"},
+		AllowedHeaders:   []string{"Authorization", "Content-Type"},
+		AllowCredentials: true,
 	})
 	app := negroni.New()
 	app.Use(negroni.NewRecovery())
 	app.Use(negroni.NewLogger())
 	app.Use(c)
 	app.UseHandler(r.Multiplexer())
+	// http.Handle("/api/admin-ws/", server)
 
 	return app
 }

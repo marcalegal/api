@@ -6,6 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/marcalegal/api/admin/brands"
+	"github.com/marcalegal/api/admin/statistics"
 	"github.com/marcalegal/api/apimux"
 )
 
@@ -17,6 +18,12 @@ func Service(db *gorm.DB) apimux.Service {
 			Method:      "GET",
 			Path:        "/brands",
 			HandlerFunc: brands.Index(db),
+		},
+		{
+			Name:        "Statistics",
+			Method:      "GET",
+			Path:        "/statistics",
+			HandlerFunc: statistics.Index(db),
 		},
 		// {
 		// 	Name:        "Show",
