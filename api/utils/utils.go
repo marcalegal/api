@@ -18,6 +18,7 @@ type Info struct {
 }
 
 const expireOffset = 3600
+const adminKind = 1
 
 func getTokenRemainingValidity(timestamp interface{}) int {
 	if validity, ok := timestamp.(float64); ok {
@@ -79,4 +80,38 @@ func BearerAuth(db *gorm.DB, h http.HandlerFunc) http.HandlerFunc {
 
 		h(w, r)
 	}
+}
+
+// AdminAuth ....
+func AdminAuth(db *gorm.DB, h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userToken := r.Header.Get("Authorization")
+		re := regexp.MustCompile("Bearer (.+)?")
+		matched := re.FindStringSubmatch(userToken)
+		bearer := matched[1]
+		valid := validateAdminToken(db, bearer)
+
+		if !valid {
+			http.Error(w, "Authorization failed", http.StatusUnauthorized)
+			return
+		}
+
+		h(w, r)
+	}
+}
+
+func validateAdminToken(db *gorm.DB, bearer string) bool {
+	row := db.
+		Table("users").
+		Select("kind").
+		Where("session_token = ?", bearer).
+		Row()
+
+	var kind int
+	row.Scan(&kind)
+
+	if kind == 1 {
+		return true
+	}
+	return false
 }

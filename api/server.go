@@ -7,6 +7,7 @@ import (
 	"github.com/codegangsta/negroni"
 	"github.com/jinzhu/gorm"
 	"github.com/lib/pq"
+	"github.com/marcalegal/api/admin"
 	"github.com/marcalegal/api/apimux"
 	"github.com/marcalegal/api/brands"
 	"github.com/marcalegal/api/classes"
@@ -55,6 +56,7 @@ func App() *negroni.Negroni {
 	v1.AddService("/domain", domain.Service(db))
 	v1.AddService("/classes", classes.Service(db))
 	v1.AddService("/uploader", uploader.Service(db))
+	v1.AddService("/admin", admin.Service(db))
 
 	// c := cors.Default()
 	c := cors.New(cors.Options{

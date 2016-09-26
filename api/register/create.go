@@ -42,7 +42,12 @@ func create(db *gorm.DB) http.HandlerFunc {
 			SessionToken: "",
 		}
 
-		if db.First(&dbUser).RowsAffected == 0 {
+		fmt.Println()
+		userExists := db.Where(mldb.User{
+			Email: dbUser.Email,
+		}).Select("email").Find(&dbUser).RowsAffected
+
+		if userExists == 0 {
 			db.Create(&dbUser)
 			tokenString, err := utils.CreateToken(dbUser.ID)
 			if err != nil {

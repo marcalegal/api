@@ -33,33 +33,34 @@ func Builddb() {
 	}
 
 	db.LogMode(true)
+	db.DropTableIfExists(&Natural{})
+	db.DropTableIfExists(&RPL{})
+	db.DropTableIfExists(&Juridica{})
+	db.DropTableIfExists(&Domains{})
+	db.DropTableIfExists(&Brand{})
 	db.DropTableIfExists(&User{})
+
 	if !db.HasTable(&User{}) {
 		db.CreateTable(&User{})
 		db.Model(&User{}).AddIndex("idx_user_email", "email")
 	}
 
-	db.DropTableIfExists(&Brand{})
 	if !db.HasTable(&Brand{}) {
 		db.CreateTable(&Brand{})
 	}
 
-	db.DropTableIfExists(&Domains{})
 	if !db.HasTable(&Domains{}) {
 		db.CreateTable(&Domains{})
 	}
 
-	db.DropTableIfExists(&Natural{})
 	if !db.HasTable(&Natural{}) {
 		db.CreateTable(&Natural{})
 	}
 
-	db.DropTableIfExists(&Juridica{})
 	if !db.HasTable(&Juridica{}) {
 		db.CreateTable(&Juridica{})
 	}
 
-	db.DropTableIfExists(&RPL{})
 	if !db.HasTable(&RPL{}) {
 		db.CreateTable(&RPL{})
 	}
