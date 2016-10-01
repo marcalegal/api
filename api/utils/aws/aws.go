@@ -5,6 +5,7 @@ package aws
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -13,13 +14,12 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/joho/godotenv"
 )
 
 // AWSACCESSKEY ...
 const (
-	AWSACCESSKEY = "AKIAIHN2WUGNKB6ODDYQ"
-	AWSSECRETKEY = "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"
-	TOKEN        = ""
+	TOKEN = ""
 )
 
 // S3Handler ...
@@ -97,8 +97,15 @@ func (s *S3Handler) UploadPDF(file *os.File, filename string, userID int, brandN
 
 // NewAWSS3Handler ...
 func NewAWSS3Handler(bucket string) *S3Handler {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	AWSACCESSKEY := os.Getenv("AWS_ACCESS_KEY")
+	AWSSECRETKEY := os.Getenv("AWS_SECRET_KEY")
 	creds := credentials.NewStaticCredentials(AWSACCESSKEY, AWSSECRETKEY, TOKEN)
-	_, err := creds.Get()
+	_, err = creds.Get()
 	if err != nil {
 		fmt.Printf("bad credentials: %s", err)
 		return nil

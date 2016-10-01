@@ -4,3 +4,4 @@ admin-panel
 admin-panel2
 tmp/*
 !tmp/.keep
+.env
