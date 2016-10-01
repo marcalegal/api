@@ -78,7 +78,8 @@ func Legal(brandName string, user mldb.Juridica, rpl mldb.RPL, userID int, brand
 	pdf.Ln(20)
 
 	filename := fmt.Sprintf("%s_%s_%s.pdf", brandName, business, fullname)
-	path := fmt.Sprintf("/tmp/pdfs/%d/%s", userID, brandName)
+	pwd, _ := os.Getwd()
+	path := fmt.Sprintf("%s/tmp/pdfs/%d/%s", pwd, userID, brandName)
 	if err := os.MkdirAll(path, os.ModePerm); err != nil {
 		panic(err)
 	}
