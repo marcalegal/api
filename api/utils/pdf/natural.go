@@ -97,7 +97,7 @@ func Natural(brandName string, user mldb.Natural, userID int, brand mldb.Brand) 
 	pdf.Ln(20)
 
 	filename := fmt.Sprintf("%s_%s_%s.pdf", brandName, name, lastname)
-	path := fmt.Sprintf("tmp/pdfs/%d/%s", userID, brandName)
+	path := fmt.Sprintf("/tmp/pdfs/%d/%s", userID, brandName)
 	if err := os.MkdirAll(path, os.ModePerm); err != nil {
 		panic(err)
 	}
