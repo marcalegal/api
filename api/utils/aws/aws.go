@@ -96,7 +96,7 @@ func (s *S3Handler) UploadPDF(file *os.File, filename string, userID int, brandN
 
 // NewAWSS3Handler ...
 func NewAWSS3Handler(bucket string) *S3Handler {
-	_ := godotenv.Load()
+	godotenv.Load()
 
 	AWSACCESSKEY := os.Getenv("AWS_ACCESS_KEY")
 	AWSSECRETKEY := os.Getenv("AWS_SECRET_KEY")
