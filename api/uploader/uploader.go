@@ -62,7 +62,7 @@ func handler(db *gorm.DB) http.HandlerFunc {
 			//create destination file making sure the path is writeable.
 			filename := files[i].Filename
 
-			path := fmt.Sprintf("/tmp/images/%s", filename)
+			path := fmt.Sprintf("tmp/images/%s", filename)
 			dst, err := os.Create(path)
 			defer dst.Close()
 

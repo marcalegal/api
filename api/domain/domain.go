@@ -12,11 +12,6 @@ import (
 	"github.com/marcalegal/api/utils/crawler"
 )
 
-// BASEURL ...
-const (
-	BASEURL = "http://si3.bcentral.cl/Indicadoressiete/secure/IndicadoresDiarios.aspx"
-)
-
 // DomResponse ...
 type DomResponse struct {
 	Status    string `json:"status"`

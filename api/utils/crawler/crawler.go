@@ -135,7 +135,7 @@ func DomainCl(url string) bool {
 		return false
 	}
 	html := scrape.Text(root)
-	return strings.Contains(html, "<td>Nombre de dominio no existe.</td>")
+	return strings.Contains(html, "Titular:")
 }
 
 // DomainCom ...
