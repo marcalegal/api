@@ -46,12 +46,12 @@ func handler(db *gorm.DB) http.HandlerFunc {
 
 		if len(terms) == 2 {
 			sanitizeTerm1 := strings.TrimSpace(terms[0])
-			term1 := "%" + sanitizeTerm1 + "%"
-			term2 := "%" + sanitizeTerm1 + "%"
+			term1 := "% " + sanitizeTerm1 + "%"
+			term2 := "%" + sanitizeTerm1 + " %"
 			term3 := "%" + sanitizeTerm1 + "%"
 			sanitizeTerm2 := strings.TrimSpace(terms[1])
-			term4 := "%" + sanitizeTerm2 + "%"
-			term5 := "%" + sanitizeTerm2 + "%"
+			term4 := "% " + sanitizeTerm2 + "%"
+			term5 := "%" + sanitizeTerm2 + " %"
 			term6 := "%" + sanitizeTerm2 + "%"
 
 			rows, _ = db.
