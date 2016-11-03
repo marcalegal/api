@@ -1,9 +1,11 @@
 package nisas
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
@@ -27,13 +29,33 @@ func handler(db *gorm.DB) http.HandlerFunc {
 	return utils.BearerAuth(db, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		var nisas []string
-		term := "%" + mux.Vars(r)["term"] + "%"
+		var term = mux.Vars(r)["term"]
 
-		rows, _ := db.
-			Table("words").
-			Where("word LIKE ?", term).
-			Select("word").
-			Rows()
+		var terms = strings.Split(term, ",")
+		var rows *sql.Rows
+
+		if len(terms) == 2 {
+			sanitizeTerm1 := strings.TrimSpace(terms[0])
+
+			term1 := "%" + sanitizeTerm1 + "%"
+			sanitizeTerm2 := strings.TrimSpace(terms[1])
+			term2 := "%" + sanitizeTerm2 + "%"
+
+			rows, _ = db.
+				Table("words").
+				Where("word LIKE ? OR word LIKE ?", term1, term2).
+				Select("word").
+				Rows()
+		} else {
+			term1 := "%" + strings.TrimSpace(terms[0]) + "%"
+
+			rows, _ = db.
+				Table("words").
+				Where("word LIKE ?", term1).
+				Select("word").
+				Rows()
+		}
+
 		defer rows.Close()
 		for rows.Next() {
 			var word string
