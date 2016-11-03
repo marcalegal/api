@@ -65,7 +65,7 @@ func handler(db *gorm.DB) http.HandlerFunc {
 					term5,
 					term6,
 				).
-				Select("word").
+				Select("class_id, detail, kind").
 				Rows()
 		} else {
 			sanitizeTerm1 := strings.TrimSpace(terms[0])
