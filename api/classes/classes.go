@@ -55,7 +55,7 @@ func handler(db *gorm.DB) http.HandlerFunc {
 			term6 := "%" + sanitizeTerm2 + "%"
 
 			rows, _ = db.
-				Table("words").
+				Table("classes").
 				Where(
 					"detail LIKE ? OR detail LIKE ? OR detail LIKE ? OR detail LIKE ? OR detail LIKE ? OR detail LIKE ?",
 					term1,
