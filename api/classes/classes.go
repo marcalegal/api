@@ -1,6 +1,7 @@
 package classes
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -40,20 +41,49 @@ func handler(db *gorm.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		var sqlresp SQLResponse
 		term := mux.Vars(r)["term"]
-		term1 := "% " + term + "%"
-		term2 := "%" + term + " %"
-		term3 := "%" + term + "%"
+		var terms = strings.Split(term, ",")
+		var rows *sql.Rows
 
-		rows, _ := db.
-			Table("classes").
-			Where(
-				"detail LIKE ? OR detail LIKE ? OR detail LIKE ?",
-				term1,
-				term2,
-				term3,
-			).
-			Select("class_id, detail, kind").
-			Rows()
+		if len(terms) == 2 {
+			sanitizeTerm1 := strings.TrimSpace(terms[0])
+			term1 := "%" + sanitizeTerm1 + "%"
+			term2 := "%" + sanitizeTerm1 + "%"
+			term3 := "%" + sanitizeTerm1 + "%"
+			sanitizeTerm2 := strings.TrimSpace(terms[1])
+			term4 := "%" + sanitizeTerm2 + "%"
+			term5 := "%" + sanitizeTerm2 + "%"
+			term6 := "%" + sanitizeTerm2 + "%"
+
+			rows, _ = db.
+				Table("words").
+				Where(
+					"detail LIKE ? OR detail LIKE ? OR detail LIKE ? OR detail LIKE ? OR detail LIKE ? OR detail LIKE ?",
+					term1,
+					term2,
+					term3,
+					term4,
+					term5,
+					term6,
+				).
+				Select("word").
+				Rows()
+		} else {
+			sanitizeTerm1 := strings.TrimSpace(terms[0])
+			term1 := "% " + sanitizeTerm1 + "%"
+			term2 := "%" + sanitizeTerm1 + " %"
+			term3 := "%" + sanitizeTerm1 + "%"
+			rows, _ = db.
+				Table("classes").
+				Where(
+					"detail LIKE ? OR detail LIKE ? OR detail LIKE ?",
+					term1,
+					term2,
+					term3,
+				).
+				Select("class_id, detail, kind").
+				Rows()
+		}
+
 		defer rows.Close()
 
 		for rows.Next() {

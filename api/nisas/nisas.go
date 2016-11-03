@@ -1,7 +1,6 @@
 package nisas
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -30,31 +29,13 @@ func handler(db *gorm.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		var nisas []string
 		var term = mux.Vars(r)["term"]
+		term1 := "%" + strings.TrimSpace(term) + "%"
 
-		var terms = strings.Split(term, ",")
-		var rows *sql.Rows
-
-		if len(terms) == 2 {
-			sanitizeTerm1 := strings.TrimSpace(terms[0])
-
-			term1 := "%" + sanitizeTerm1 + "%"
-			sanitizeTerm2 := strings.TrimSpace(terms[1])
-			term2 := "%" + sanitizeTerm2 + "%"
-
-			rows, _ = db.
-				Table("words").
-				Where("word LIKE ? OR word LIKE ?", term1, term2).
-				Select("word").
-				Rows()
-		} else {
-			term1 := "%" + strings.TrimSpace(terms[0]) + "%"
-
-			rows, _ = db.
-				Table("words").
-				Where("word LIKE ?", term1).
-				Select("word").
-				Rows()
-		}
+		rows, _ := db.
+			Table("words").
+			Where("word LIKE ?", term1).
+			Select("word").
+			Rows()
 
 		defer rows.Close()
 		for rows.Next() {
