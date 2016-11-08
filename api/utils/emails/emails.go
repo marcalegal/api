@@ -35,7 +35,7 @@ func SendEmailNatural(path string, user mldb.Natural, brand mldb.Brand) bool {
 	res, err := c.Send(&postmark.Message{
 		From: &mail.Address{
 			Name:    "Marcalegal",
-			Address: "rf@finciero.com",
+			Address: "contacto@marcalegal.cl",
 		},
 		To: []*mail.Address{
 			{
