@@ -215,6 +215,11 @@
 			"Rev": "93a9d1608a79dd7957cfe4c4a8270c2b82dca6bc"
 		},
 		{
+			"ImportPath": "github.com/leekchan/accounting",
+			"Comment": "v0.1-2-g8843ffb",
+			"Rev": "8843ffbc785acfcb4bfefcff20e46f6cb6338ee1"
+		},
+		{
 			"ImportPath": "github.com/lib/pq",
 			"Comment": "go1.0-cutoff-86-gdd3290b",
 			"Rev": "dd3290b2f71a8b30bee8e4e75a337a825263d26f"

@@ -6,13 +6,15 @@ import (
 	"os"
 
 	"github.com/hjr265/postmark.go/postmark"
+	"github.com/leekchan/accounting"
 	"github.com/marcalegal/mldb"
 )
 
 // SendEmailNatural ...pos
 func SendEmailNatural(path string, user mldb.Natural, brand mldb.Brand) bool {
+	ac := accounting.Accounting{Symbol: "$", Precision: 2, Thousand: ".", Decimal: ","}
 	data := map[string]interface{}{
-		"finalPrice":      brand.Total,
+		"finalPrice":      ac.FormatMoney(brand.Total),
 		"reservationCode": brand.PaymentCode,
 	}
 	c := postmark.Client{
@@ -62,8 +64,9 @@ func SendEmailNatural(path string, user mldb.Natural, brand mldb.Brand) bool {
 
 // SendEmailLegal ...pos
 func SendEmailLegal(path string, user mldb.RPL, brand mldb.Brand) bool {
+	ac := accounting.Accounting{Symbol: "$", Precision: 2, Thousand: ".", Decimal: ","}
 	data := map[string]interface{}{
-		"finalPrice":      brand.Total,
+		"finalPrice":      ac.FormatMoney(brand.Total),
 		"reservationCode": brand.PaymentCode,
 	}
 	c := postmark.Client{
@@ -85,7 +88,7 @@ func SendEmailLegal(path string, user mldb.RPL, brand mldb.Brand) bool {
 	res, err := c.Send(&postmark.Message{
 		From: &mail.Address{
 			Name:    "Marcalegal",
-			Address: "rf@finciero.com",
+			Address: "contacto@marcalegal.cl",
 		},
 		To: []*mail.Address{
 			{
@@ -124,7 +127,7 @@ func RecoverEmail(fullname, email, password string) bool {
 	res, err := c.Send(&postmark.Message{
 		From: &mail.Address{
 			Name:    "Marcalegal",
-			Address: "rf@finciero.com",
+			Address: "contacto@marcalegal.cl",
 		},
 		To: []*mail.Address{
 			{
