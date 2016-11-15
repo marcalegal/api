@@ -18,7 +18,7 @@ func SendEmailNatural(path string, user mldb.Natural, brand mldb.Brand) bool {
 		"reservationCode": brand.PaymentCode,
 	}
 	c := postmark.Client{
-		ApiKey: "f7b61ac2-0b1a-4e85-93da-08890fce306b",
+		ApiKey: "c6db85e0-809d-4cfd-a0db-1f970a714958",
 		Secure: true,
 	}
 	file, err := os.Open(path)
@@ -45,7 +45,7 @@ func SendEmailNatural(path string, user mldb.Natural, brand mldb.Brand) bool {
 				Address: user.Email,
 			},
 		},
-		TemplateId:    929062,
+		TemplateId:    1080816,
 		TemplateModel: data,
 		Attachments:   attch,
 	})
@@ -70,7 +70,7 @@ func SendEmailLegal(path string, user mldb.RPL, brand mldb.Brand) bool {
 		"reservationCode": brand.PaymentCode,
 	}
 	c := postmark.Client{
-		ApiKey: "f7b61ac2-0b1a-4e85-93da-08890fce306b",
+		ApiKey: "c6db85e0-809d-4cfd-a0db-1f970a714958",
 		Secure: true,
 	}
 	file, err := os.Open(path)
@@ -96,7 +96,7 @@ func SendEmailLegal(path string, user mldb.RPL, brand mldb.Brand) bool {
 				Address: user.Email,
 			},
 		},
-		TemplateId:    929062,
+		TemplateId:    1080816,
 		TemplateModel: data,
 		Attachments:   attch,
 	})
@@ -120,7 +120,7 @@ func RecoverEmail(fullname, email, password string) bool {
 		"fullname": fullname,
 	}
 	c := postmark.Client{
-		ApiKey: "f7b61ac2-0b1a-4e85-93da-08890fce306b",
+		ApiKey: "c6db85e0-809d-4cfd-a0db-1f970a714958",
 		Secure: true,
 	}
 
@@ -135,7 +135,7 @@ func RecoverEmail(fullname, email, password string) bool {
 				Address: email,
 			},
 		},
-		TemplateId:    955281,
+		TemplateId:    1080817,
 		TemplateModel: data,
 	})
 
