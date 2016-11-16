@@ -7,6 +7,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/marcalegal/api/utils"
+	"github.com/marcalegal/api/utils/emails"
 	"github.com/marcalegal/mldb"
 )
 
@@ -53,6 +54,14 @@ func create(db *gorm.DB) http.HandlerFunc {
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
+			}
+
+			var fullname = dbUser.Name + " " + dbUser.Lastname
+			var email = dbUser.Email
+			var password = dbUser.Password
+
+			if !emails.RegisterEmail(fullname, email, password) {
+				fmt.Println("Error sending registration emails")
 			}
 
 			db.Model(&dbUser).Update("session_token", tokenString)

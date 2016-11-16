@@ -150,3 +150,42 @@ func RecoverEmail(fullname, email, password string) bool {
 
 	return false
 }
+
+// RegisterEmail ...Register email
+func RegisterEmail(fullname, email, password string) bool {
+	data := map[string]interface{}{
+		"name":     fullname,
+		"username": email,
+		"password": password,
+	}
+	c := postmark.Client{
+		ApiKey: "c6db85e0-809d-4cfd-a0db-1f970a714958",
+		Secure: true,
+	}
+
+	res, err := c.Send(&postmark.Message{
+		From: &mail.Address{
+			Name:    "Marcalegal",
+			Address: "contacto@marcalegal.cl",
+		},
+		To: []*mail.Address{
+			{
+				Name:    fullname,
+				Address: email,
+			},
+		},
+		TemplateId:    1083300,
+		TemplateModel: data,
+	})
+
+	if err != nil {
+		panic(err)
+	}
+
+	if res.ErrorCode == 0 {
+		fmt.Printf("%s\n", res.Message)
+		return true
+	}
+
+	return false
+}
